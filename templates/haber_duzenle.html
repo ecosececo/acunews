@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Haber Düzenle - Acıbadem Üniversitesi Haber{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #6a1b9a, #9c27b0);">
+                    <h3 class="text-white mb-0">
+                        <i class="fas fa-edit me-2"></i>Haber Düzenle
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ url_for('haber_duzenle', haber_id=haber.id) }}" method="POST" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="baslik" class="form-label">
+                                <i class="fas fa-heading me-2"></i>Haber Başlığı
+                            </label>
+                            <input type="text" class="form-control" id="baslik" name="baslik" 
+                                   value="{{ haber.baslik }}" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="ozet" class="form-label">
+                                <i class="fas fa-align-left me-2"></i>Özet
+                            </label>
+                            <textarea class="form-control" id="ozet" name="ozet" rows="2">{{ haber.ozet }}</textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="icerik" class="form-label">
+                                <i class="fas fa-file-alt me-2"></i>Haber İçeriği
+                            </label>
+                            <textarea class="form-control" id="icerik" name="icerik" rows="8" required>{{ haber.icerik }}</textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="kategori_id" class="form-label">
+                                    <i class="fas fa-tag me-2"></i>Kategori
+                                </label>
+                                <select class="form-select" id="kategori_id" name="kategori_id" required>
+                                    {% for kat in kategoriler %}
+                                    <option value="{{ kat.id }}" {% if kat.id == haber.kategori_id %}selected{% endif %}>
+                                        {{ kat.ad }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="yazar" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Yazar
+                                </label>
+                                <input type="text" class="form-control" id="yazar" name="yazar" 
+                                       value="{{ haber.yazar }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="gorsel" class="form-label">
+                                <i class="fas fa-image me-2"></i>Haber Görseli
+                            </label>
+                            
+                            {% if haber.gorsel_url %}
+                            <div class="mb-3 p-3 rounded" style="background-color: #f5f5f5;">
+                                <p class="mb-2"><strong>Mevcut Görsel:</strong></p>
+                                {% if haber.gorsel_url.startswith('http') %}
+                                <img src="{{ haber.gorsel_url }}" alt="Mevcut görsel" 
+                                     style="max-width: 100%; max-height: 200px; border-radius: 10px;">
+                                {% else %}
+                                <img src="{{ url_for('static', filename='uploads/' + haber.gorsel_url) }}" alt="Mevcut görsel" 
+                                     style="max-width: 100%; max-height: 200px; border-radius: 10px;">
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            
+                            <input type="file" class="form-control" id="gorsel" name="gorsel" 
+                                   accept="image/png, image/jpeg, image/jpg, image/gif, image/webp">
+                            <small class="text-muted">Yeni görsel yüklemek için dosya seçin (Mevcut görsel korunacaktır)</small>
+                            
+                            <!-- Görsel Önizleme -->
+                            <div id="gorselOnizleme" class="mt-3" style="display: none;">
+                                <p class="mb-2"><strong>Yeni Görsel Önizleme:</strong></p>
+                                <img id="onizlemeImg" src="" alt="Önizleme" 
+                                     style="max-width: 100%; max-height: 300px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                            </button>
+                            <a href="{{ url_for('haber_detay', haber_id=haber.id) }}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>İptal
+                            </a>
+                        </div>
+                    </form>
+                    
+                    <script>
+                        document.getElementById('gorsel').addEventListener('change', function(e) {
+                            const file = e.target.files[0];
+                            const onizlemeDiv = document.getElementById('gorselOnizleme');
+                            const onizlemeImg = document.getElementById('onizlemeImg');
+                            
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    onizlemeImg.src = e.target.result;
+                                    onizlemeDiv.style.display = 'block';
+                                }
+                                reader.readAsDataURL(file);
+                            } else {
+                                onizlemeDiv.style.display = 'none';
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Giriş Yap - Acıbadem Üniversitesi Haber{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #6a1b9a, #9c27b0); border-radius: 20px 20px 0 0;">
+                    <h3 class="text-white mb-0">
+                        <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                    </h3>
+                    <p class="text-light mb-0 mt-2" style="opacity: 0.8;">Hesabınıza giriş yapın</p>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ url_for('giris') }}" method="POST">
+                        <div class="mb-4">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2" style="color: var(--neon-purple);"></i>E-posta Adresi
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="ornek@acibadem.edu.tr" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="sifre" class="form-label">
+                                <i class="fas fa-lock me-2" style="color: var(--neon-purple);"></i>Şifre
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="sifre" name="sifre" 
+                                       placeholder="••••••••" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" 
+                                        style="border-color: var(--neon-purple); color: var(--neon-purple);">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" id="hatirla" name="hatirla" 
+                                   style="background-color: transparent; border-color: var(--neon-purple);">
+                            <label class="form-check-label" for="hatirla" style="color: rgba(255,255,255,0.8);">
+                                Beni hatırla
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                        </button>
+                        
+                        <div class="text-center">
+                            <p style="color: rgba(255,255,255,0.7);">
+                                Hesabınız yok mu? 
+                                <a href="{{ url_for('uye_ol') }}" style="color: var(--neon-blue); text-decoration: none;">
+                                    <strong>Üye Ol</strong>
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Demo Hesap Bilgisi -->
+            <div class="card mt-4" style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-blue);">
+                <div class="card-body text-center">
+                    <h6 style="color: var(--neon-blue);"><i class="fas fa-info-circle me-2"></i>Demo Hesap</h6>
+                    <p class="mb-1" style="color: rgba(255,255,255,0.8);">
+                        <strong>E-posta:</strong> admin@acibadem.edu.tr
+                    </p>
+                    <p class="mb-0" style="color: rgba(255,255,255,0.8);">
+                        <strong>Şifre:</strong> admin123
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Şifre göster/gizle
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const sifreInput = document.getElementById('sifre');
+        const icon = this.querySelector('i');
+        
+        if (sifreInput.type === 'password') {
+            sifreInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            sifreInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ACU NEWS - Acıbadem Üniversitesi Haber Portalı{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/favicon.svg') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Zalando Sans SemiExpanded Font -->
+    <link href="https://fonts.cdnfonts.com/css/zalando-sans" rel="stylesheet">
+    <!-- Three.js for 3D effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        @font-face {
+            font-family: 'Zalando Sans SemiExpanded';
+            src: url('https://db.onlinewebfonts.com/t/5f5d0a7c9c80f39e8b7c6f0a8b3b3b3b.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        :root {
+            --primary-color: #6a1b9a;
+            --secondary-color: #9c27b0;
+            --accent-color: #e1bee7;
+            --dark-color: #4a148c;
+            --neon-purple: #bf00ff;
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff00ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Zalando Sans SemiExpanded', 'Zalando Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0a0a0a 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Apply Zalando Sans to all text elements */
+        h1, h2, h3, h4, h5, h6, p, a, span, div, button, input, textarea, select, label {
+            font-family: 'Zalando Sans SemiExpanded', 'Zalando Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* 3D Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Floating Particles */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neon-purple);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-purple);
+            animation: floatParticle 15s infinite ease-in-out;
+        }
+        
+        @keyframes floatParticle {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        /* Glowing Grid Lines */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(106, 27, 154, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(106, 27, 154, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+        }
+        
+        /* Holographic Effect */
+        .hologram-effect {
+            position: relative;
+        }
+        
+        .hologram-effect::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(0, 240, 255, 0.1) 50%,
+                transparent 70%
+            );
+            animation: hologramScan 3s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes hologramScan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Navbar with Glassmorphism */
+        .navbar {
+            background: rgba(106, 27, 154, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(191, 0, 255, 0.3);
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-purple), var(--neon-pink), transparent);
+            animation: navGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes navGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px var(--neon-purple);
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            from { text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-purple); }
+            to { text-shadow: 0 0 20px var(--neon-blue), 0 0 40px var(--neon-blue); }
+        }
+        
+        .navbar-brand i {
+            margin-right: 10px;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .nav-link {
+            color: white !important;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--neon-blue);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link:hover {
+            color: var(--neon-blue) !important;
+            text-shadow: 0 0 10px var(--neon-blue);
+            transform: translateY(-2px);
+        }
+        
+        /* Hero Section with 3D Effect */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(106, 27, 154, 0.9), rgba(74, 20, 140, 0.9));
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, transparent 50%);
+            animation: heroRotate 20s linear infinite;
+        }
+        
+        @keyframes heroRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hero-section h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 30px var(--neon-purple);
+            animation: titleFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Cyber Card Effect */
+        .card {
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(191, 0, 255, 0.2);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transition: left 0.5s;
+        }
+        
+        .card:hover::before {
+            left: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-15px) rotateX(5deg);
+            box-shadow: 
+                0 20px 60px rgba(191, 0, 255, 0.4),
+                0 0 30px rgba(0, 240, 255, 0.2),
+                inset 0 0 30px rgba(191, 0, 255, 0.1);
+            border-color: var(--neon-purple);
+        }
+        
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .card:hover .card-img-top {
+            transform: scale(1.1);
+        }
+        
+        .card-body {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-title {
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-purple);
+        }
+        
+        .card-text {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Neon Badge */
+        .badge-kategori {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            box-shadow: 0 0 15px var(--neon-purple);
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 15px var(--neon-purple); }
+            50% { box-shadow: 0 0 25px var(--neon-blue); }
+        }
+        
+        /* Cyber Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-purple), var(--primary-color));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(191, 0, 255, 0.5);
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(191, 0, 255, 0.8);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark-color);
+            border-color: var(--dark-color);
+            transform: scale(1.05);
+        }
+        
+        .btn-outline-primary {
+            color: var(--neon-blue);
+            border: 2px solid var(--neon-blue);
+            border-radius: 25px;
+            background: transparent;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 30px var(--neon-blue);
+        }
+        
+        /* Glassmorphism Sidebar */
+        .sidebar-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(191, 0, 255, 0.2);
+        }
+        
+        .sidebar-card h5 {
+            color: var(--neon-blue);
+            border-bottom: 2px solid var(--neon-purple);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+        
+        .kategori-list a {
+            display: block;
+            padding: 12px 18px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+        }
+        
+        .kategori-list a:hover {
+            background: rgba(191, 0, 255, 0.2);
+            border-color: var(--neon-purple);
+            color: var(--neon-blue);
+            transform: translateX(10px);
+            box-shadow: 0 0 15px rgba(191, 0, 255, 0.3);
+        }
+        
+        .kategori-list a i {
+            margin-right: 12px;
+            color: var(--neon-purple);
+        }
+        
+        /* Cyber Footer */
+        .footer {
+            background: linear-gradient(135deg, rgba(106, 27, 154, 0.95), rgba(74, 20, 140, 0.95));
+            color: white;
+            padding: 50px 0 25px;
+            margin-top: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue), var(--neon-pink), var(--neon-purple));
+            background-size: 300% 100%;
+            animation: footerGlow 3s linear infinite;
+        }
+        
+        @keyframes footerGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+        
+        .footer a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer a:hover {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+        
+        /* Neon Search Form */
+        .search-form {
+            max-width: 400px;
+        }
+        
+        .search-form .form-control {
+            border-radius: 25px 0 0 25px;
+            border: 2px solid var(--neon-purple);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .search-form .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .search-form .form-control:focus {
+            box-shadow: 0 0 20px var(--neon-purple);
+            border-color: var(--neon-blue);
+        }
+        
+        .search-form .btn {
+            border-radius: 0 25px 25px 0;
+            background: var(--neon-purple);
+            color: white;
+            border: 2px solid var(--neon-purple);
+        }
+        
+        .search-form .btn:hover {
+            background: var(--neon-blue);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+        
+        .tarih-badge, .okunma-badge {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .tarih-badge i, .okunma-badge i {
+            margin-right: 5px;
+            color: var(--neon-blue);
+        }
+        
+        .alert {
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 12px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(191, 0, 255, 0.3);
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .form-label {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .haber-detay-img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(191, 0, 255, 0.3);
+        }
+        
+        .haber-icerik {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        
+        .yazar-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .yazar-info i {
+            font-size: 2rem;
+            color: var(--neon-purple);
+            margin-right: 15px;
+            text-shadow: 0 0 10px var(--neon-purple);
+        }
+        
+        /* Floating Action Elements */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .shape {
+            position: absolute;
+            border: 2px solid var(--neon-purple);
+            opacity: 0.1;
+            animation: shapeFloat 20s infinite linear;
+        }
+        
+        .shape-1 {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+        
+        .shape-2 {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            border-radius: 50%;
+            animation-delay: -5s;
+        }
+        
+        .shape-3 {
+            width: 80px;
+            height: 80px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes shapeFloat {
+            0% { transform: rotate(0deg) translate(0, 0); }
+            25% { transform: rotate(90deg) translate(20px, 20px); }
+            50% { transform: rotate(180deg) translate(0, 0); }
+            75% { transform: rotate(270deg) translate(-20px, 20px); }
+            100% { transform: rotate(360deg) translate(0, 0); }
+        }
+        
+        /* Glitch Effect for headings */
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            animation: glitch-1 2s infinite linear alternate-reverse;
+            color: var(--neon-blue);
+            z-index: -1;
+        }
+        
+        .glitch::after {
+            animation: glitch-2 3s infinite linear alternate-reverse;
+            color: var(--neon-pink);
+            z-index: -2;
+        }
+        
+        @keyframes glitch-1 {
+            0%, 100% { clip-path: inset(0 0 95% 0); transform: translate(-2px, 2px); }
+            20% { clip-path: inset(20% 0 60% 0); transform: translate(2px, -2px); }
+            40% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 2px); }
+            60% { clip-path: inset(60% 0 20% 0); transform: translate(2px, -2px); }
+            80% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 2px); }
+        }
+        
+        @keyframes glitch-2 {
+            0%, 100% { clip-path: inset(95% 0 0 0); transform: translate(2px, -2px); }
+            20% { clip-path: inset(60% 0 20% 0); transform: translate(-2px, 2px); }
+            40% { clip-path: inset(40% 0 40% 0); transform: translate(2px, -2px); }
+            60% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 2px); }
+            80% { clip-path: inset(5% 0 80% 0); transform: translate(2px, -2px); }
+        }
+        
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+            z-index: 9999;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        
+        /* Loading animation */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-ring {
+            width: 80px;
+            height: 80px;
+            border: 4px solid transparent;
+            border-top-color: var(--neon-purple);
+            border-radius: 50%;
+            animation: loaderSpin 1s linear infinite;
+            position: relative;
+        }
+        
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 4px solid transparent;
+            border-top-color: var(--neon-blue);
+            border-radius: 50%;
+            animation: loaderSpin 0.8s linear infinite reverse;
+        }
+        
+        @keyframes loaderSpin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Content area styling */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .particle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-ring"></div>
+    </div>
+    
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    
+    <!-- 3D Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+    
+    <!-- Grid Overlay -->
+    <div class="grid-overlay"></div>
+    
+    <!-- Floating Particles -->
+    <div class="particles-container" id="particles"></div>
+    
+    <!-- Floating Shapes -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('ana_sayfa') }}">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="ACU NEWS Logo" style="height: 45px; width: auto; margin-right: 5px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('ana_sayfa') }}">
+                            <i class="fas fa-home me-1"></i>Ana Sayfa
+                        </a>
+                    </li>
+                    {% for kat in kategoriler %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('kategori_sayfasi', kategori_id=kat.id) }}">
+                            {{ kat.ad }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('hakkinda') }}">
+                            <i class="fas fa-info-circle me-1"></i>Hakkında
+                        </a>
+                    </li>
+                </ul>
+                <form class="d-flex search-form" action="{{ url_for('ara') }}" method="GET">
+                    <input class="form-control" type="search" name="q" placeholder="Haber ara..." required>
+                    <button class="btn" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+                
+                <!-- Kullanıcı Menüsü -->
+                <ul class="navbar-nav ms-3">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if current_user.profil_foto %}
+                            <img src="{{ url_for('static', filename='uploads/' + current_user.profil_foto) }}" alt="Profil" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                            {% else %}
+                            <i class="fas fa-user-circle me-2" style="font-size: 24px;"></i>
+                            {% endif %}
+                            <span>{{ current_user.ad }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="background: rgba(10, 10, 30, 0.95); border: 1px solid rgba(0, 212, 255, 0.3);">
+                            <li>
+                                <a class="dropdown-item text-light" href="{{ url_for('profil') }}">
+                                    <i class="fas fa-user me-2" style="color: #00d4ff;"></i>Profilim
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-light" href="{{ url_for('haber_ekle') }}">
+                                    <i class="fas fa-plus-circle me-2" style="color: #00ff88;"></i>Haber Ekle
+                                </a>
+                            </li>
+                            {% if current_user.rol == 'admin' %}
+                            <li><hr class="dropdown-divider" style="border-color: rgba(0, 212, 255, 0.3);"></li>
+                            <li>
+                                <a class="dropdown-item text-light" href="{{ url_for('admin') }}">
+                                    <i class="fas fa-cog me-2" style="color: #ff6b6b;"></i>Admin Panel
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider" style="border-color: rgba(0, 212, 255, 0.3);"></li>
+                            <li>
+                                <a class="dropdown-item text-light" href="{{ url_for('cikis') }}">
+                                    <i class="fas fa-sign-out-alt me-2" style="color: #ff6b6b;"></i>Çıkış Yap
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link btn-auth" href="{{ url_for('giris') }}" style="background: linear-gradient(135deg, #00d4ff, #00ff88); color: #0a0a1e; padding: 8px 20px; border-radius: 25px; margin-right: 10px; font-weight: 600;">
+                            <i class="fas fa-sign-in-alt me-1"></i>Giriş
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-auth" href="{{ url_for('uye_ol') }}" style="border: 2px solid #00d4ff; color: #00d4ff; padding: 8px 20px; border-radius: 25px; font-weight: 600;">
+                            <i class="fas fa-user-plus me-1"></i>Üye Ol
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="ACU NEWS Logo" style="height: 50px; width: auto;">
+                    </div>
+                    <p>Acıbadem Üniversitesi resmi haber ve duyuru portalı. Tüm akademik, sosyal ve spor haberlerini takip edin.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Hızlı Linkler</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('ana_sayfa') }}"><i class="fas fa-chevron-right me-2"></i>Ana Sayfa</a></li>
+                        <li><a href="{{ url_for('haber_ekle') }}"><i class="fas fa-chevron-right me-2"></i>Haber Ekle</a></li>
+                        <li><a href="{{ url_for('hakkinda') }}"><i class="fas fa-chevron-right me-2"></i>Hakkında</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>İletişim</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i>info@acibadem.edu.tr</li>
+                        <li><i class="fas fa-phone me-2"></i>+90 216 500 44 44</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i>Kerem Aydınlar Kampüsü, İstanbul</li>
+                    </ul>
+                </div>
+            </div>
+            <hr style="border-color: rgba(255,255,255,0.2);">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2026 ACU NEWS - Acıbadem Üniversitesi Haber Portalı. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+    </div><!-- End Content Wrapper -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AR/VR Effects JavaScript -->
+    <script>
+        // Page Loader
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('pageLoader').classList.add('hidden');
+            }, 800);
+        });
+        
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', function() {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            document.getElementById('scrollIndicator').style.width = scrollPercent + '%';
+        });
+        
+        // Create Floating Particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = (Math.random() * 10) + 's';
+                particle.style.width = (Math.random() * 4 + 2) + 'px';
+                particle.style.height = particle.style.width;
+                
+                // Random colors
+                const colors = ['#bf00ff', '#00f0ff', '#ff00ff', '#9c27b0'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.boxShadow = `0 0 ${Math.random() * 10 + 5}px ${particle.style.background}`;
+                
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+        
+        // Three.js 3D Background
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // Create floating geometric shapes
+        const geometries = [];
+        const materials = [
+            new THREE.MeshBasicMaterial({ color: 0xbf00ff, wireframe: true, transparent: true, opacity: 0.3 }),
+            new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true, transparent: true, opacity: 0.3 }),
+            new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true, transparent: true, opacity: 0.3 })
+        ];
+        
+        // Torus
+        const torus = new THREE.Mesh(
+            new THREE.TorusGeometry(3, 0.5, 16, 100),
+            materials[0]
+        );
+        torus.position.set(-8, 2, -10);
+        scene.add(torus);
+        geometries.push(torus);
+        
+        // Icosahedron
+        const icosahedron = new THREE.Mesh(
+            new THREE.IcosahedronGeometry(2, 0),
+            materials[1]
+        );
+        icosahedron.position.set(8, -2, -12);
+        scene.add(icosahedron);
+        geometries.push(icosahedron);
+        
+        // Octahedron
+        const octahedron = new THREE.Mesh(
+            new THREE.OctahedronGeometry(1.5),
+            materials[2]
+        );
+        octahedron.position.set(0, 5, -15);
+        scene.add(octahedron);
+        geometries.push(octahedron);
+        
+        // Dodecahedron
+        const dodecahedron = new THREE.Mesh(
+            new THREE.DodecahedronGeometry(1.8),
+            materials[0]
+        );
+        dodecahedron.position.set(-5, -4, -10);
+        scene.add(dodecahedron);
+        geometries.push(dodecahedron);
+        
+        // Box
+        const box = new THREE.Mesh(
+            new THREE.BoxGeometry(2, 2, 2),
+            materials[1]
+        );
+        box.position.set(6, 4, -8);
+        scene.add(box);
+        geometries.push(box);
+        
+        // Create stars/points
+        const starsGeometry = new THREE.BufferGeometry();
+        const starCount = 500;
+        const positions = new Float32Array(starCount * 3);
+        
+        for (let i = 0; i < starCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 100;
+            positions[i + 1] = (Math.random() - 0.5) * 100;
+            positions[i + 2] = (Math.random() - 0.5) * 100;
+        }
+        
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1, transparent: true, opacity: 0.8 });
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(stars);
+        
+        camera.position.z = 5;
+        
+        // Mouse movement effect
+        let mouseX = 0;
+        let mouseY = 0;
+        
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Rotate shapes
+            geometries.forEach((geo, index) => {
+                geo.rotation.x += 0.003 * (index + 1);
+                geo.rotation.y += 0.005 * (index + 1);
+                geo.position.y += Math.sin(Date.now() * 0.001 + index) * 0.005;
+            });
+            
+            // Rotate stars
+            stars.rotation.y += 0.0002;
+            stars.rotation.x += 0.0001;
+            
+            // Camera follows mouse slightly
+            camera.position.x += (mouseX * 2 - camera.position.x) * 0.02;
+            camera.position.y += (mouseY * 2 - camera.position.y) * 0.02;
+            camera.lookAt(scene.position);
+            
+            renderer.render(scene, camera);
+        }
+        animate();
+        
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // GSAP Animations for elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate cards on scroll
+            const cards = document.querySelectorAll('.card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        gsap.fromTo(entry.target, 
+                            { opacity: 0, y: 50, rotateX: 10 },
+                            { opacity: 1, y: 0, rotateX: 0, duration: 0.6, delay: index * 0.1, ease: "power2.out" }
+                        );
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            cards.forEach(card => observer.observe(card));
+            
+            // Animate navbar
+            gsap.fromTo('.navbar', 
+                { y: -100, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }
+            );
+            
+            // Animate hero section
+            gsap.fromTo('.hero-section h1', 
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 1, delay: 0.3, ease: "power2.out" }
+            );
+            
+            gsap.fromTo('.hero-section p', 
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 1, delay: 0.5, ease: "power2.out" }
+            );
+            
+            // Sidebar animation
+            gsap.fromTo('.sidebar-card', 
+                { opacity: 0, x: 50 },
+                { opacity: 1, x: 0, duration: 0.6, stagger: 0.2, delay: 0.5, ease: "power2.out" }
+            );
+        });
+        
+        // Add hover 3D effect to cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-15px)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

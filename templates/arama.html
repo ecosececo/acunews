@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Arama Sonuçları - Acıbadem Üniversitesi Haber{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Başlık -->
+            <div class="mb-4">
+                <h2><i class="fas fa-search me-2" style="color: #9c27b0;"></i>Arama Sonuçları</h2>
+                {% if sorgu %}
+                <p class="text-muted">"<strong>{{ sorgu }}</strong>" için {{ haberler|length }} sonuç bulundu</p>
+                {% endif %}
+            </div>
+            
+            <!-- Arama Formu -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form action="{{ url_for('ara') }}" method="GET" class="d-flex gap-2">
+                        <input type="text" class="form-control" name="q" value="{{ sorgu }}" 
+                               placeholder="Haber ara...">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Ara
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            {% if haberler %}
+                <div class="row">
+                    {% for haber in haberler %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            {% if haber.gorsel_url %}
+                                {% if haber.gorsel_url.startswith('http') %}
+                                <img src="{{ haber.gorsel_url }}" class="card-img-top" alt="{{ haber.baslik }}">
+                                {% else %}
+                                <img src="{{ url_for('static', filename='uploads/' + haber.gorsel_url) }}" class="card-img-top" alt="{{ haber.baslik }}">
+                                {% endif %}
+                            {% else %}
+                            <div class="card-img-top d-flex align-items-center justify-content-center" 
+                                 style="background: linear-gradient(135deg, #6a1b9a, #9c27b0); height: 200px;">
+                                <i class="fas fa-newspaper" style="font-size: 4rem; color: rgba(255,255,255,0.5);"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <span class="badge-kategori mb-2 d-inline-block">{{ haber.kategori.ad }}</span>
+                                <h5 class="card-title">{{ haber.baslik }}</h5>
+                                <p class="card-text">{{ haber.ozet or haber.icerik[:150] + '...' }}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="tarih-badge">
+                                        <i class="far fa-calendar-alt"></i>
+                                        {{ haber.tarih.strftime('%d.%m.%Y') }}
+                                    </span>
+                                    <span class="okunma-badge">
+                                        <i class="far fa-eye"></i>
+                                        {{ haber.okunma_sayisi }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pb-3">
+                                <a href="{{ url_for('haber_detay', haber_id=haber.id) }}" class="btn btn-primary w-100">
+                                    <i class="fas fa-arrow-right me-2"></i>Devamını Oku
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% elif sorgu %}
+                <div class="alert alert-warning text-center py-5">
+                    <i class="fas fa-search fa-3x mb-3"></i>
+                    <h4>Sonuç Bulunamadı</h4>
+                    <p>"{{ sorgu }}" ile eşleşen haber bulunamadı. Farklı kelimelerle aramayı deneyin.</p>
+                    <a href="{{ url_for('ana_sayfa') }}" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
+                    </a>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center py-5">
+                    <i class="fas fa-search fa-3x mb-3"></i>
+                    <h4>Arama Yapın</h4>
+                    <p>Yukarıdaki arama kutusuna aradığınız kelimeyi yazın.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="sidebar-card">
+                <h5><i class="fas fa-tags me-2"></i>Kategoriler</h5>
+                <div class="kategori-list">
+                    {% for kat in kategoriler %}
+                    <a href="{{ url_for('kategori_sayfasi', kategori_id=kat.id) }}">
+                        <i class="fas fa-folder"></i>{{ kat.ad }}
+                        <span class="badge bg-secondary float-end">{{ kat.haberler|length }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

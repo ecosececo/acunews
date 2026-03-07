@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="50%" style="stop-color:#a855f7"/>
+      <stop offset="100%" style="stop-color:#ff006e"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="32" cy="32" r="30" fill="#0a0a1e"/>
+  
+  <!-- Ring back -->
+  <ellipse cx="32" cy="32" rx="28" ry="18" fill="none" stroke="url(#grad)" stroke-width="2" stroke-dasharray="0 88 88" transform="rotate(-20, 32, 32)"/>
+  
+  <!-- Planet -->
+  <circle cx="32" cy="32" r="16" fill="#0a0a1e" stroke="url(#grad)" stroke-width="2"/>
+  
+  <!-- A letter simplified -->
+  <path d="M26 42 L32 22 L38 42 M28 36 L36 36" fill="none" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- Ring front -->
+  <ellipse cx="32" cy="32" rx="28" ry="18" fill="none" stroke="url(#grad)" stroke-width="3" stroke-dasharray="88 88" transform="rotate(-20, 32, 32)"/>
+</svg>

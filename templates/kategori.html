@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ kategori.ad }} - Acıbadem Üniversitesi Haber{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Başlık -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-2">
+                            <li class="breadcrumb-item"><a href="{{ url_for('ana_sayfa') }}">Ana Sayfa</a></li>
+                            <li class="breadcrumb-item active">{{ kategori.ad }}</li>
+                        </ol>
+                    </nav>
+                    <h2><i class="fas fa-folder-open me-2" style="color: #9c27b0;"></i>{{ kategori.ad }} Haberleri</h2>
+                </div>
+                <span class="badge bg-secondary fs-6">{{ haberler|length }} Haber</span>
+            </div>
+            
+            {% if haberler %}
+                <div class="row">
+                    {% for haber in haberler %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            {% if haber.gorsel_url %}
+                                {% if haber.gorsel_url.startswith('http') %}
+                                <img src="{{ haber.gorsel_url }}" class="card-img-top" alt="{{ haber.baslik }}">
+                                {% else %}
+                                <img src="{{ url_for('static', filename='uploads/' + haber.gorsel_url) }}" class="card-img-top" alt="{{ haber.baslik }}">
+                                {% endif %}
+                            {% else %}
+                            <div class="card-img-top d-flex align-items-center justify-content-center" 
+                                 style="background: linear-gradient(135deg, #6a1b9a, #9c27b0); height: 200px;">
+                                <i class="fas fa-newspaper" style="font-size: 4rem; color: rgba(255,255,255,0.5);"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ haber.baslik }}</h5>
+                                <p class="card-text">{{ haber.ozet or haber.icerik[:150] + '...' }}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="tarih-badge">
+                                        <i class="far fa-calendar-alt"></i>
+                                        {{ haber.tarih.strftime('%d.%m.%Y') }}
+                                    </span>
+                                    <span class="okunma-badge">
+                                        <i class="far fa-eye"></i>
+                                        {{ haber.okunma_sayisi }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pb-3">
+                                <a href="{{ url_for('haber_detay', haber_id=haber.id) }}" class="btn btn-primary w-100">
+                                    <i class="fas fa-arrow-right me-2"></i>Devamını Oku
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center py-5">
+                    <i class="fas fa-info-circle fa-3x mb-3"></i>
+                    <h4>Bu kategoride henüz haber yok</h4>
+                    <p>Bu kategoriye ilk haberi eklemek ister misiniz?</p>
+                    <a href="{{ url_for('haber_ekle') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Haber Ekle
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="sidebar-card">
+                <h5><i class="fas fa-tags me-2"></i>Tüm Kategoriler</h5>
+                <div class="kategori-list">
+                    {% for kat in kategoriler %}
+                    <a href="{{ url_for('kategori_sayfasi', kategori_id=kat.id) }}"
+                       {% if kat.id == kategori.id %}style="background-color: #e1bee7;"{% endif %}>
+                        <i class="fas fa-folder"></i>{{ kat.ad }}
+                        <span class="badge bg-secondary float-end">{{ kat.haberler|length }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="sidebar-card">
+                <h5><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('haber_ekle') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Yeni Haber Ekle
+                    </a>
+                    <a href="{{ url_for('ana_sayfa') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

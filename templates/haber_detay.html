@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ haber.baslik }} - Acıbadem Üniversitesi Haber{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('ana_sayfa') }}">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('kategori_sayfasi', kategori_id=haber.kategori.id) }}">{{ haber.kategori.ad }}</a>
+                    </li>
+                    <li class="breadcrumb-item active">{{ haber.baslik[:30] }}...</li>
+                </ol>
+            </nav>
+            
+            <!-- Haber Kartı -->
+            <div class="card">
+                {% if haber.gorsel_url %}
+                    {% if haber.gorsel_url.startswith('http') %}
+                    <img src="{{ haber.gorsel_url }}" class="haber-detay-img" alt="{{ haber.baslik }}">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='uploads/' + haber.gorsel_url) }}" class="haber-detay-img" alt="{{ haber.baslik }}">
+                    {% endif %}
+                {% else %}
+                <div class="haber-detay-img d-flex align-items-center justify-content-center" 
+                     style="background: linear-gradient(135deg, #6a1b9a, #9c27b0); height: 300px;">
+                    <i class="fas fa-newspaper" style="font-size: 6rem; color: rgba(255,255,255,0.5);"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body p-4">
+                    <span class="badge-kategori mb-3 d-inline-block">{{ haber.kategori.ad }}</span>
+                    <h1 class="card-title mb-4">{{ haber.baslik }}</h1>
+                    
+                    <!-- Yazar ve Tarih Bilgisi -->
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-4 border-bottom">
+                        <div class="yazar-info mb-2">
+                            <i class="fas fa-user-circle"></i>
+                            <div>
+                                <strong>{{ haber.yazar }}</strong>
+                                <br>
+                                <small class="text-muted">Yazar</small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-4">
+                            <span class="tarih-badge">
+                                <i class="far fa-calendar-alt"></i>
+                                {{ haber.tarih.strftime('%d %B %Y, %H:%M') }}
+                            </span>
+                            <span class="okunma-badge">
+                                <i class="far fa-eye"></i>
+                                {{ haber.okunma_sayisi }} okunma
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Özet -->
+                    {% if haber.ozet %}
+                    <div class="alert alert-light mb-4" style="border-left: 4px solid #9c27b0;">
+                        <strong><i class="fas fa-quote-left me-2"></i>Özet:</strong>
+                        <p class="mb-0 mt-2">{{ haber.ozet }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- İçerik -->
+                    <div class="haber-icerik">
+                        {{ haber.icerik|safe }}
+                    </div>
+                    
+                    <!-- İşlem Butonları -->
+                    <div class="d-flex gap-2 mt-5 pt-4 border-top">
+                        <a href="{{ url_for('haber_duzenle', haber_id=haber.id) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-2"></i>Düzenle
+                        </a>
+                        <a href="{{ url_for('haber_sil', haber_id=haber.id) }}" class="btn btn-outline-danger"
+                           onclick="return confirm('Bu haberi silmek istediğinizden emin misiniz?')">
+                            <i class="fas fa-trash me-2"></i>Sil
+                        </a>
+                        <a href="{{ url_for('ana_sayfa') }}" class="btn btn-secondary ms-auto">
+                            <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Kategoriler -->
+            <div class="sidebar-card">
+                <h5><i class="fas fa-tags me-2"></i>Kategoriler</h5>
+                <div class="kategori-list">
+                    {% for kat in kategoriler %}
+                    <a href="{{ url_for('kategori_sayfasi', kategori_id=kat.id) }}"
+                       {% if kat.id == haber.kategori_id %}style="background-color: #e1bee7;"{% endif %}>
+                        <i class="fas fa-folder"></i>{{ kat.ad }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Paylaş -->
+            <div class="sidebar-card">
+                <h5><i class="fas fa-share-alt me-2"></i>Paylaş</h5>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="#" class="btn btn-outline-primary" style="border-color: #3b5998; color: #3b5998;">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-primary" style="border-color: #1da1f2; color: #1da1f2;">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-primary" style="border-color: #0077b5; color: #0077b5;">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-primary" style="border-color: #25d366; color: #25d366;">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

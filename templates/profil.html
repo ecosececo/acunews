@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Profilim - Acıbadem Üniversitesi Haber{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Profil Kartı -->
+        <div class="col-lg-4 mb-4">
+            <div class="card text-center" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);">
+                <div class="card-body p-4">
+                    <!-- Profil Resmi -->
+                    <div class="mb-4">
+                        {% if current_user.profil_resmi %}
+                        <img src="{{ url_for('static', filename='uploads/' + current_user.profil_resmi) }}" 
+                             alt="{{ current_user.ad }}" 
+                             style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--neon-purple); box-shadow: 0 0 30px var(--neon-purple);">
+                        {% else %}
+                        <div style="width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue)); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 0 30px var(--neon-purple);">
+                            <i class="fas fa-user" style="font-size: 4rem; color: white;"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <h3 style="color: white; text-shadow: 0 0 10px var(--neon-purple);">
+                        {{ current_user.ad }} {{ current_user.soyad }}
+                    </h3>
+                    
+                    <span class="badge mb-3" style="background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue)); font-size: 0.9rem; padding: 8px 20px;">
+                        {% if current_user.rol == 'admin' %}
+                        <i class="fas fa-crown me-1"></i>Admin
+                        {% elif current_user.rol == 'ogretim_uyesi' %}
+                        <i class="fas fa-chalkboard-teacher me-1"></i>Öğretim Üyesi
+                        {% else %}
+                        <i class="fas fa-user-graduate me-1"></i>Öğrenci
+                        {% endif %}
+                    </span>
+                    
+                    <ul class="list-unstyled text-start mt-4" style="color: rgba(255,255,255,0.8);">
+                        <li class="mb-3">
+                            <i class="fas fa-envelope me-3" style="color: var(--neon-blue); width: 20px;"></i>
+                            {{ current_user.email }}
+                        </li>
+                        {% if current_user.ogrenci_no %}
+                        <li class="mb-3">
+                            <i class="fas fa-id-card me-3" style="color: var(--neon-blue); width: 20px;"></i>
+                            {{ current_user.ogrenci_no }}
+                        </li>
+                        {% endif %}
+                        {% if current_user.bolum %}
+                        <li class="mb-3">
+                            <i class="fas fa-graduation-cap me-3" style="color: var(--neon-blue); width: 20px;"></i>
+                            {{ current_user.bolum }}
+                        </li>
+                        {% endif %}
+                        <li class="mb-3">
+                            <i class="fas fa-calendar-alt me-3" style="color: var(--neon-blue); width: 20px;"></i>
+                            Üyelik: {{ current_user.kayit_tarihi.strftime('%d.%m.%Y') }}
+                        </li>
+                    </ul>
+                    
+                    <a href="{{ url_for('profil_duzenle') }}" class="btn btn-primary w-100 mt-3">
+                        <i class="fas fa-edit me-2"></i>Profili Düzenle
+                    </a>
+                </div>
+            </div>
+            
+            <!-- İstatistikler -->
+            <div class="card mt-4" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);">
+                <div class="card-body">
+                    <h5 style="color: var(--neon-blue); border-bottom: 2px solid var(--neon-purple); padding-bottom: 10px;">
+                        <i class="fas fa-chart-bar me-2"></i>İstatistikler
+                    </h5>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="p-3 rounded" style="background: rgba(191, 0, 255, 0.1);">
+                                <h3 style="color: var(--neon-purple);">{{ haberler|length }}</h3>
+                                <small style="color: rgba(255,255,255,0.7);">Haber</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded" style="background: rgba(0, 240, 255, 0.1);">
+                                <h3 style="color: var(--neon-blue);">
+                                    {{ haberler|sum(attribute='okunma_sayisi') }}
+                                </h3>
+                                <small style="color: rgba(255,255,255,0.7);">Toplam Okunma</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Haberlerim -->
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 style="color: white; text-shadow: 0 0 10px var(--neon-purple);">
+                    <i class="fas fa-newspaper me-2"></i>Haberlerim
+                </h2>
+                <a href="{{ url_for('haber_ekle') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Yeni Haber
+                </a>
+            </div>
+            
+            {% if haberler %}
+            <div class="row">
+                {% for haber in haberler %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if haber.gorsel_url %}
+                            {% if haber.gorsel_url.startswith('http') %}
+                            <img src="{{ haber.gorsel_url }}" class="card-img-top" alt="{{ haber.baslik }}">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='uploads/' + haber.gorsel_url) }}" class="card-img-top" alt="{{ haber.baslik }}">
+                            {% endif %}
+                        {% else %}
+                        <div class="card-img-top d-flex align-items-center justify-content-center" 
+                             style="background: linear-gradient(135deg, #6a1b9a, #9c27b0); height: 150px;">
+                            <i class="fas fa-newspaper" style="font-size: 3rem; color: rgba(255,255,255,0.5);"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <span class="badge-kategori mb-2 d-inline-block">{{ haber.kategori.ad }}</span>
+                            <h5 class="card-title">{{ haber.baslik[:50] }}{% if haber.baslik|length > 50 %}...{% endif %}</h5>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="tarih-badge">
+                                    <i class="far fa-calendar-alt"></i>
+                                    {{ haber.tarih.strftime('%d.%m.%Y') }}
+                                </span>
+                                <span class="okunma-badge">
+                                    <i class="far fa-eye"></i>
+                                    {{ haber.okunma_sayisi }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pb-3">
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('haber_detay', haber_id=haber.id) }}" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('haber_duzenle', haber_id=haber.id) }}" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('haber_sil', haber_id=haber.id) }}" class="btn btn-sm btn-outline-danger flex-grow-1"
+                                   onclick="return confirm('Bu haberi silmek istediğinizden emin misiniz?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="card" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-newspaper fa-4x mb-3" style="color: var(--neon-purple); opacity: 0.5;"></i>
+                    <h4 style="color: white;">Henüz haber eklemediniz</h4>
+                    <p style="color: rgba(255,255,255,0.7);">İlk haberinizi ekleyerek başlayın!</p>
+                    <a href="{{ url_for('haber_ekle') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Haber Ekle
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

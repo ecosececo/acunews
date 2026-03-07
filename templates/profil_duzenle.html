@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil Düzenle - Acıbadem Üniversitesi Haber{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #6a1b9a, #9c27b0); border-radius: 20px 20px 0 0;">
+                    <h3 class="text-white mb-0">
+                        <i class="fas fa-user-edit me-2"></i>Profili Düzenle
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ url_for('profil_duzenle') }}" method="POST" enctype="multipart/form-data">
+                        <!-- Mevcut Profil Resmi -->
+                        <div class="text-center mb-4">
+                            {% if current_user.profil_resmi %}
+                            <img src="{{ url_for('static', filename='uploads/' + current_user.profil_resmi) }}" 
+                                 id="mevcutResim"
+                                 alt="{{ current_user.ad }}" 
+                                 style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon-purple); box-shadow: 0 0 20px var(--neon-purple);">
+                            {% else %}
+                            <div id="mevcutResim" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue)); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--neon-purple);">
+                                <i class="fas fa-user" style="font-size: 3rem; color: white;"></i>
+                            </div>
+                            {% endif %}
+                            <div id="yeniResimOnizleme" style="display: none;">
+                                <img id="onizlemeImg" src="" alt="Yeni Profil" 
+                                     style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon-blue); box-shadow: 0 0 20px var(--neon-blue);">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="ad" class="form-label">
+                                    <i class="fas fa-user me-2" style="color: var(--neon-purple);"></i>Ad
+                                </label>
+                                <input type="text" class="form-control" id="ad" name="ad" 
+                                       value="{{ current_user.ad }}" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="soyad" class="form-label">
+                                    <i class="fas fa-user me-2" style="color: var(--neon-purple);"></i>Soyad
+                                </label>
+                                <input type="text" class="form-control" id="soyad" name="soyad" 
+                                       value="{{ current_user.soyad }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2" style="color: var(--neon-purple);"></i>E-posta
+                            </label>
+                            <input type="email" class="form-control" id="email" 
+                                   value="{{ current_user.email }}" disabled 
+                                   style="opacity: 0.6;">
+                            <small style="color: rgba(255,255,255,0.5);">E-posta adresi değiştirilemez.</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="bolum" class="form-label">
+                                <i class="fas fa-graduation-cap me-2" style="color: var(--neon-purple);"></i>Bölüm
+                            </label>
+                            <select class="form-select" id="bolum" name="bolum">
+                                <option value="">Seçiniz</option>
+                                <option value="Tıp Fakültesi" {% if current_user.bolum == 'Tıp Fakültesi' %}selected{% endif %}>Tıp Fakültesi</option>
+                                <option value="Diş Hekimliği" {% if current_user.bolum == 'Diş Hekimliği' %}selected{% endif %}>Diş Hekimliği</option>
+                                <option value="Eczacılık" {% if current_user.bolum == 'Eczacılık' %}selected{% endif %}>Eczacılık</option>
+                                <option value="Sağlık Bilimleri" {% if current_user.bolum == 'Sağlık Bilimleri' %}selected{% endif %}>Sağlık Bilimleri</option>
+                                <option value="Mühendislik" {% if current_user.bolum == 'Mühendislik' %}selected{% endif %}>Mühendislik</option>
+                                <option value="Fen-Edebiyat" {% if current_user.bolum == 'Fen-Edebiyat' %}selected{% endif %}>Fen-Edebiyat</option>
+                                <option value="İktisadi ve İdari Bilimler" {% if current_user.bolum == 'İktisadi ve İdari Bilimler' %}selected{% endif %}>İktisadi ve İdari Bilimler</option>
+                                <option value="İletişim" {% if current_user.bolum == 'İletişim' %}selected{% endif %}>İletişim</option>
+                                <option value="Hukuk" {% if current_user.bolum == 'Hukuk' %}selected{% endif %}>Hukuk</option>
+                                <option value="Diğer" {% if current_user.bolum == 'Diğer' %}selected{% endif %}>Diğer</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="profil_resmi" class="form-label">
+                                <i class="fas fa-camera me-2" style="color: var(--neon-purple);"></i>Profil Resmi Değiştir
+                            </label>
+                            <input type="file" class="form-control" id="profil_resmi" name="profil_resmi" 
+                                   accept="image/png, image/jpeg, image/jpg, image/gif">
+                        </div>
+                        
+                        <!-- Şifre Değiştirme -->
+                        <div class="card mb-4" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1);">
+                            <div class="card-header" style="background: transparent; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <h5 class="mb-0" style="color: var(--neon-blue);">
+                                    <i class="fas fa-key me-2"></i>Şifre Değiştir (Opsiyonel)
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="eski_sifre" class="form-label">Mevcut Şifre</label>
+                                    <input type="password" class="form-control" id="eski_sifre" name="eski_sifre">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="yeni_sifre" class="form-label">Yeni Şifre</label>
+                                        <input type="password" class="form-control" id="yeni_sifre" name="yeni_sifre" minlength="6">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="yeni_sifre_tekrar" class="form-label">Yeni Şifre Tekrar</label>
+                                        <input type="password" class="form-control" id="yeni_sifre_tekrar" name="yeni_sifre_tekrar" minlength="6">
+                                    </div>
+                                </div>
+                                <small style="color: rgba(255,255,255,0.5);">Şifrenizi değiştirmek istemiyorsanız bu alanları boş bırakın.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                            </button>
+                            <a href="{{ url_for('profil') }}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Profil resmi önizleme
+    document.getElementById('profil_resmi').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const mevcutResim = document.getElementById('mevcutResim');
+        const yeniOnizleme = document.getElementById('yeniResimOnizleme');
+        const onizlemeImg = document.getElementById('onizlemeImg');
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                onizlemeImg.src = e.target.result;
+                mevcutResim.style.display = 'none';
+                yeniOnizleme.style.display = 'inline-block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            mevcutResim.style.display = 'inline-block';
+            yeniOnizleme.style.display = 'none';
+        }
+    });
+    
+    // Yeni şifre eşleşme kontrolü
+    document.getElementById('yeni_sifre_tekrar').addEventListener('input', function() {
+        const yeniSifre = document.getElementById('yeni_sifre').value;
+        const yeniSifreTekrar = this.value;
+        
+        if (yeniSifre && yeniSifreTekrar) {
+            if (yeniSifre !== yeniSifreTekrar) {
+                this.style.borderColor = '#ff4444';
+                this.style.boxShadow = '0 0 10px rgba(255, 68, 68, 0.5)';
+            } else {
+                this.style.borderColor = '#00ff00';
+                this.style.boxShadow = '0 0 10px rgba(0, 255, 0, 0.5)';
+            }
+        }
+    });
+</script>
+{% endblock %}

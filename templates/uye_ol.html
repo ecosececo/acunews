@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Üye Ol - Acıbadem Üniversitesi Haber{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #6a1b9a, #9c27b0); border-radius: 20px 20px 0 0;">
+                    <h3 class="text-white mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Üye Ol
+                    </h3>
+                    <p class="text-light mb-0 mt-2" style="opacity: 0.8;">Yeni hesap oluşturun</p>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ url_for('uye_ol') }}" method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="ad" class="form-label">
+                                    <i class="fas fa-user me-2" style="color: var(--neon-purple);"></i>Ad <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="ad" name="ad" 
+                                       placeholder="Adınız" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="soyad" class="form-label">
+                                    <i class="fas fa-user me-2" style="color: var(--neon-purple);"></i>Soyad <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="soyad" name="soyad" 
+                                       placeholder="Soyadınız" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2" style="color: var(--neon-purple);"></i>E-posta Adresi <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="ornek@acibadem.edu.tr" required>
+                            <small style="color: rgba(255,255,255,0.5);">Üniversite e-posta adresinizi kullanmanız önerilir.</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="ogrenci_no" class="form-label">
+                                    <i class="fas fa-id-card me-2" style="color: var(--neon-purple);"></i>Öğrenci Numarası
+                                </label>
+                                <input type="text" class="form-control" id="ogrenci_no" name="ogrenci_no" 
+                                       placeholder="202X0XXXXX">
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="bolum" class="form-label">
+                                    <i class="fas fa-graduation-cap me-2" style="color: var(--neon-purple);"></i>Bölüm
+                                </label>
+                                <select class="form-select" id="bolum" name="bolum">
+                                    <option value="">Seçiniz</option>
+                                    <option value="Tıp Fakültesi">Tıp Fakültesi</option>
+                                    <option value="Diş Hekimliği">Diş Hekimliği</option>
+                                    <option value="Eczacılık">Eczacılık</option>
+                                    <option value="Sağlık Bilimleri">Sağlık Bilimleri</option>
+                                    <option value="Mühendislik">Mühendislik</option>
+                                    <option value="Fen-Edebiyat">Fen-Edebiyat</option>
+                                    <option value="İktisadi ve İdari Bilimler">İktisadi ve İdari Bilimler</option>
+                                    <option value="İletişim">İletişim</option>
+                                    <option value="Hukuk">Hukuk</option>
+                                    <option value="Diğer">Diğer</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="sifre" class="form-label">
+                                    <i class="fas fa-lock me-2" style="color: var(--neon-purple);"></i>Şifre <span class="text-danger">*</span>
+                                </label>
+                                <input type="password" class="form-control" id="sifre" name="sifre" 
+                                       placeholder="••••••••" required minlength="6">
+                                <small style="color: rgba(255,255,255,0.5);">En az 6 karakter</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="sifre_tekrar" class="form-label">
+                                    <i class="fas fa-lock me-2" style="color: var(--neon-purple);"></i>Şifre Tekrar <span class="text-danger">*</span>
+                                </label>
+                                <input type="password" class="form-control" id="sifre_tekrar" name="sifre_tekrar" 
+                                       placeholder="••••••••" required minlength="6">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="profil_resmi" class="form-label">
+                                <i class="fas fa-camera me-2" style="color: var(--neon-purple);"></i>Profil Resmi (Opsiyonel)
+                            </label>
+                            <input type="file" class="form-control" id="profil_resmi" name="profil_resmi" 
+                                   accept="image/png, image/jpeg, image/jpg, image/gif">
+                            
+                            <!-- Önizleme -->
+                            <div id="profilOnizleme" class="mt-3 text-center" style="display: none;">
+                                <img id="onizlemeImg" src="" alt="Önizleme" 
+                                     style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon-purple); box-shadow: 0 0 20px var(--neon-purple);">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" id="sozlesme" name="sozlesme" required
+                                   style="background-color: transparent; border-color: var(--neon-purple);">
+                            <label class="form-check-label" for="sozlesme" style="color: rgba(255,255,255,0.8);">
+                                <a href="#" style="color: var(--neon-blue);">Kullanım koşullarını</a> ve 
+                                <a href="#" style="color: var(--neon-blue);">gizlilik politikasını</a> kabul ediyorum.
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-3">
+                            <i class="fas fa-user-plus me-2"></i>Üye Ol
+                        </button>
+                        
+                        <div class="text-center">
+                            <p style="color: rgba(255,255,255,0.7);">
+                                Zaten hesabınız var mı? 
+                                <a href="{{ url_for('giris') }}" style="color: var(--neon-blue); text-decoration: none;">
+                                    <strong>Giriş Yap</strong>
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Profil resmi önizleme
+    document.getElementById('profil_resmi').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const onizlemeDiv = document.getElementById('profilOnizleme');
+        const onizlemeImg = document.getElementById('onizlemeImg');
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                onizlemeImg.src = e.target.result;
+                onizlemeDiv.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            onizlemeDiv.style.display = 'none';
+        }
+    });
+    
+    // Şifre eşleşme kontrolü
+    document.getElementById('sifre_tekrar').addEventListener('input', function() {
+        const sifre = document.getElementById('sifre').value;
+        const sifreTekrar = this.value;
+        
+        if (sifre !== sifreTekrar) {
+            this.style.borderColor = '#ff4444';
+            this.style.boxShadow = '0 0 10px rgba(255, 68, 68, 0.5)';
+        } else {
+            this.style.borderColor = '#00ff00';
+            this.style.boxShadow = '0 0 10px rgba(0, 255, 0, 0.5)';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Hakkında - Acıbadem Üniversitesi Haber{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body p-5">
+                    <h1 class="mb-4">
+                        <i class="fas fa-info-circle me-2" style="color: #9c27b0;"></i>
+                        Hakkımızda
+                    </h1>
+                    
+                    <div class="mb-5">
+                        <h4 style="color: #6a1b9a;">Acıbadem Üniversitesi Haber Portalı</h4>
+                        <p class="lead">
+                            Acıbadem Üniversitesi resmi haber ve duyuru platformuna hoş geldiniz! Bu portal, 
+                            kampüs içindeki tüm gelişmeleri, akademik haberleri, sosyal etkinlikleri 
+                            ve önemli duyuruları takip etmeniz için tasarlanmıştır.
+                        </p>
+                    </div>
+                    
+                    <div class="row mb-5">
+                        <div class="col-md-6 mb-4">
+                            <div class="p-4 rounded" style="background: linear-gradient(135deg, #f3e5f5, #e1bee7);">
+                                <h5><i class="fas fa-bullseye me-2" style="color: #6a1b9a;"></i>Misyonumuz</h5>
+                                <p class="mb-0">
+                                    Üniversite topluluğumuzu güncel ve doğru haberlerle buluşturmak, 
+                                    kampüs içi iletişimi güçlendirmek.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="p-4 rounded" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb);">
+                                <h5><i class="fas fa-eye me-2" style="color: #1976d2;"></i>Vizyonumuz</h5>
+                                <p class="mb-0">
+                                    Şeffaf, erişilebilir ve katılımcı bir haber platformu olarak 
+                                    üniversitemizin dijital iletişim merkezi olmak.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-5">
+                        <h4 style="color: #6a1b9a;">
+                            <i class="fas fa-star me-2"></i>Özelliklerimiz
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle me-2" style="color: #4caf50;"></i>
+                                        Kategorilere göre haber filtreleme
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle me-2" style="color: #4caf50;"></i>
+                                        Kolay haber ekleme ve düzenleme
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle me-2" style="color: #4caf50;"></i>
+                                        Gelişmiş arama fonksiyonu
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle me-2" style="color: #4caf50;"></i>
+                                        Mobil uyumlu tasarım
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle me-2" style="color: #4caf50;"></i>
+                                        Okunma istatistikleri
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="fas fa-check-circle me-2" style="color: #4caf50;"></i>
+                                        Sosyal medya paylaşımı
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4 style="color: #6a1b9a;">
+                            <i class="fas fa-envelope me-2"></i>İletişim
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center p-3 rounded" style="background-color: #f5f5f5;">
+                                    <i class="fas fa-envelope fa-2x mb-2" style="color: #9c27b0;"></i>
+                                    <p class="mb-0">info@universite.edu.tr</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center p-3 rounded" style="background-color: #f5f5f5;">
+                                    <i class="fas fa-phone fa-2x mb-2" style="color: #9c27b0;"></i>
+                                    <p class="mb-0">+90 212 XXX XX XX</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center p-3 rounded" style="background-color: #f5f5f5;">
+                                    <i class="fas fa-map-marker-alt fa-2x mb-2" style="color: #9c27b0;"></i>
+                                    <p class="mb-0">İstanbul, Türkiye</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="sidebar-card">
+                <h5><i class="fas fa-tags me-2"></i>Kategoriler</h5>
+                <div class="kategori-list">
+                    {% for kat in kategoriler %}
+                    <a href="{{ url_for('kategori_sayfasi', kategori_id=kat.id) }}">
+                        <i class="fas fa-folder"></i>{{ kat.ad }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="sidebar-card">
+                <h5><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('haber_ekle') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Yeni Haber Ekle
+                    </a>
+                    <a href="{{ url_for('ana_sayfa') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

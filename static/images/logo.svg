@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120">
+  <defs>
+    <!-- Gradient for ACU letters -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="50%" style="stop-color:#a855f7"/>
+      <stop offset="100%" style="stop-color:#ff006e"/>
+    </linearGradient>
+    
+    <!-- Gradient for ring -->
+    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed"/>
+      <stop offset="50%" style="stop-color:#a855f7"/>
+      <stop offset="100%" style="stop-color:#ff006e"/>
+    </linearGradient>
+    
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Strong glow for text -->
+    <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Text pattern lines -->
+    <pattern id="stripes" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+    </pattern>
+  </defs>
+  
+  <!-- A Letter -->
+  <g transform="translate(20, 15)">
+    <path d="M5 80 L35 10 L65 80 M15 55 L55 55" fill="none" stroke="url(#textGradient)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    <path d="M5 80 L35 10 L65 80 M15 55 L55 55" fill="none" stroke="url(#stripes)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  </g>
+  
+  <!-- C Letter -->
+  <g transform="translate(95, 15)">
+    <path d="M60 15 C20 15 5 35 5 45 C5 55 20 80 60 80" fill="none" stroke="url(#textGradient)" stroke-width="6" stroke-linecap="round" filter="url(#glow)"/>
+    <path d="M60 15 C20 15 5 35 5 45 C5 55 20 80 60 80" fill="none" stroke="url(#stripes)" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+  </g>
+  
+  <!-- U Letter -->
+  <g transform="translate(165, 15)">
+    <path d="M5 10 L5 55 C5 75 25 80 35 80 C45 80 65 75 65 55 L65 10" fill="none" stroke="url(#textGradient)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    <path d="M5 10 L5 55 C5 75 25 80 35 80 C45 80 65 75 65 55 L65 10" fill="none" stroke="url(#stripes)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  </g>
+  
+  <!-- Saturn-like Ring with NEWS in center -->
+  <g transform="translate(250, 5)">
+    <!-- Outer ring glow -->
+    <ellipse cx="80" cy="55" rx="78" ry="50" fill="none" stroke="url(#ringGradient)" stroke-width="2" opacity="0.3" filter="url(#glow)"/>
+    
+    <!-- Ring back part (behind the globe) -->
+    <ellipse cx="80" cy="55" rx="78" ry="28" fill="none" stroke="url(#ringGradient)" stroke-width="4" stroke-dasharray="0 125 125" transform="rotate(-12, 80, 55)" filter="url(#glow)"/>
+    
+    <!-- Inner dark background for NEWS text -->
+    <ellipse cx="80" cy="55" rx="45" ry="30" fill="rgba(10,10,30,0.9)"/>
+    <ellipse cx="80" cy="55" rx="45" ry="30" fill="none" stroke="url(#ringGradient)" stroke-width="2" opacity="0.5"/>
+    
+    <!-- NEWS text - centered and large -->
+    <text x="80" y="63" font-family="Arial Black, Helvetica, sans-serif" font-size="28" font-weight="900" text-anchor="middle" fill="#00d4ff" filter="url(#textGlow)">
+      NEWS
+    </text>
+    <text x="80" y="63" font-family="Arial Black, Helvetica, sans-serif" font-size="28" font-weight="900" text-anchor="middle" fill="url(#textGradient)">
+      NEWS
+    </text>
+    
+    <!-- Ring front part (in front of the globe) -->
+    <ellipse cx="80" cy="55" rx="78" ry="28" fill="none" stroke="url(#ringGradient)" stroke-width="5" stroke-dasharray="125 125" transform="rotate(-12, 80, 55)" filter="url(#glow)"/>
+    
+    <!-- Small decorative dots on ring -->
+    <circle cx="155" cy="45" r="3" fill="#00d4ff" filter="url(#glow)">
+      <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="5" cy="65" r="3" fill="#ff006e" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Sparkle effects -->
+  <circle cx="50" cy="25" r="2" fill="#00d4ff" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="150" cy="90" r="1.5" fill="#a855f7" opacity="0.6">
+    <animate attributeName="opacity" values="0.6;0.1;0.6" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="240" cy="20" r="2" fill="#ff006e" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+</svg>
