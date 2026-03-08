@@ -187,5 +187,5 @@ Bu proje eğitim amaçlı geliştirilmiştir.
 ---
 
 <p align="center">
-  Made with ❤️ for Acıbadem University
+  
 </p>
